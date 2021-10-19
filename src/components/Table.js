@@ -5,12 +5,12 @@ import "./style.css";
 import Button from "./Button";
 
 const Table = () => {
-  const [contactObjects, setContactObjects] = useState([]);
+  const [enteredItems, setEnteredItems] = useState([]);
   const [currentId, setCurrentId] = useState("");
   const [showform, setShowForm] = useState(false);
-  console.log("contactObjects", contactObjects);
+
   useEffect(() => {
-    firebaseDb.child("contacts").on("value", (snapshot) => {
+    firebaseDb.child("items").on("value", (snapshot) => {
       if (snapshot.val() != null) {
         const arr = [];
 
@@ -18,8 +18,8 @@ const Table = () => {
           arr.push({ ...value, checked: false, id: key });
         }
 
-        setContactObjects(arr);
-      } else setContactObjects([]);
+        setEnteredItems(arr);
+      } else setEnteredItems([]);
     });
   }, []);
 
@@ -28,39 +28,39 @@ const Table = () => {
   };
 
   const handleSelectAll = (e) => {
-    const arr = contactObjects.map((x) => {
+    const arr = enteredItems.map((x) => {
       return { ...x, checked: e.target.checked };
     });
 
-    setContactObjects(arr);
+    setEnteredItems(arr);
   };
 
   const handleChecked = (index, e) => {
-    const aaarr = contactObjects.map((x, i) => {
+    const aaarr = enteredItems.map((x, i) => {
       return {
         ...x,
         ...(i === index && { checked: e.target.checked }),
       };
     });
-    setContactObjects(aaarr);
+    setEnteredItems(aaarr);
   };
 
   const handleSelectedItems = async (e) => {
-    const filterefItems = contactObjects.filter((x) => x.checked);
+    const filterefItems = enteredItems.filter((x) => x.checked);
 
     for (const element of filterefItems) {
-      const resp = await firebaseDb.child(`contacts/${element.id}`).remove();
+      const resp = await firebaseDb.child(`items/${element.id}`).remove();
     }
   };
 
   const addOrEdit = (obj) => {
     if (currentId === "")
-      firebaseDb.child("contacts").push(obj, (err) => {
+      firebaseDb.child("items").push(obj, (err) => {
         if (err) console.log(err);
         else setCurrentId("");
       });
     else
-      firebaseDb.child(`contacts/${currentId}`).set(obj, (err) => {
+      firebaseDb.child(`items/${currentId}`).set(obj, (err) => {
         if (err) console.log(err);
         else setCurrentId("");
       });
@@ -68,7 +68,7 @@ const Table = () => {
 
   const onDelete = (key) => {
     if (window.confirm("Are you sure to delete this record?")) {
-      firebaseDb.child(`contacts/${key}`).remove((err) => {
+      firebaseDb.child(`items/${key}`).remove((err) => {
         if (err) console.log(err);
         else setCurrentId("");
       });
@@ -77,18 +77,16 @@ const Table = () => {
 
   return (
     <>
-      <div className="">
-        <div className="">
-          <h1 className=""></h1>
-        </div>
-      </div>
+      <div className=""></div>
       <div className="table_conatiner">
-        <div className="">
-          <table className="">
-            <thead className="">
+        <div>
+          <h1> Items List </h1>
+          <table>
+            <thead>
               <tr>
                 <th>
                   <input onChange={handleSelectAll} type="checkbox" />
+                  <span>Select All</span>
                 </th>
                 <th>Id</th>
                 <th>Item</th>
@@ -96,7 +94,7 @@ const Table = () => {
               </tr>
             </thead>
             <tbody>
-              {contactObjects.map((obj, index) => {
+              {enteredItems.map((obj, index) => {
                 return (
                   <tr key={`${index}-${obj.checked}`}>
                     <td>
@@ -110,15 +108,14 @@ const Table = () => {
                     <td>{obj.fullName}</td>
                     <td>
                       <a
-                        className=""
                         onClick={() => {
+                          setShowForm(true);
                           setCurrentId(obj.id);
                         }}
                       >
                         <i className="fas fa-pencil-alt"></i>
                       </a>
                       <a
-                        className="btn text-danger"
                         onClick={() => {
                           onDelete(obj.id);
                         }}
@@ -142,7 +139,7 @@ const Table = () => {
               {...{
                 addOrEdit,
                 currentId,
-                contactObjects,
+                enteredItems,
                 setShowForm: () => setShowForm(false),
               }}
             />

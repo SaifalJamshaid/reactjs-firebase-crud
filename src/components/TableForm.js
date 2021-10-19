@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import Input from "./Input";
+import "./style.css";
 
 const TableForm = (props) => {
   const initialFieldValues = {
-    fullName: "",
+    item: "",
   };
 
   const [values, setValues] = useState(initialFieldValues);
-  const [showform, setShowForm] = useState(false);
-
 
   useEffect(() => {
     if (props.currentId === "")
@@ -18,9 +17,9 @@ const TableForm = (props) => {
       });
     else
       setValues({
-        ...props.contactObjects[props.currentId],
+        ...props.enteredItems.find((x) => x.id === props.currentId),
       });
-  }, [props.currentId, props.contactObjects]);
+  }, [props.currentId, props.enteredItems]);
 
   const handleInputChange = (e) => {
     var { name, value } = e.target;
@@ -36,16 +35,11 @@ const TableForm = (props) => {
   };
 
   return (
-     <form autoComplete="off" onSubmit={handleFormSubmit}>
-     <h1>Add/Update Item</h1>
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="fas fa-user"></i>
-          </div>
-        </div>
+    <form onSubmit={handleFormSubmit}>
+      <h1>Add/Update Item</h1>
+      <div className="input_container">
+        <label>Item</label>
         <Input
-          className="form-control"
           placeholder="Full Name"
           name="fullName"
           value={values.fullName}
@@ -53,12 +47,10 @@ const TableForm = (props) => {
           required
         />
       </div>
-      <div className="form-group">
-        <Button
-          type="submit"
-          value={props.currentId === "" ? "Save" : "Update"}
-          className="btn btn-primary btn-block"
-        />
+      <div className="btn_container">
+        <Button type="submit">
+          {props.currentId === "" ? "Save" : "Update"}
+        </Button>
       </div>
     </form>
   );
