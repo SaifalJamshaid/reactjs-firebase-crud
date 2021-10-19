@@ -113,14 +113,15 @@ const Table = () => {
                           setCurrentId(obj.id);
                         }}
                       >
-                        <i className="fas fa-pencil-alt"></i>
+                        Edit
                       </a>
+                      &nbsp;
                       <a
                         onClick={() => {
                           onDelete(obj.id);
                         }}
                       >
-                        <i className="far fa-trash-alt"></i>
+                        Delete
                       </a>
                     </td>
                   </tr>
@@ -128,7 +129,7 @@ const Table = () => {
               })}
             </tbody>
           </table>
-          <div>
+          <div className='table_buttons'>
             <Button onClick={handleForm}>Add New Item</Button>
             <Button onClick={handleSelectedItems}>Delete Selected Item</Button>
           </div>
